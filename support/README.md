@@ -13,15 +13,25 @@ Initialize blockchain with `private_genesis.json`:
 $ geth --datadir private_net init support/private_genesis.json
 ```
 
-Start the chain with password `abcd`:
+Start the blockchain with password `abcd` and open as network `1234`:
 
 ```bash
-$ geth --fast --cache 512 -ipcpath ~/Library/Ethereum/geth.ipc --networkid 1235 --datadir private_net --unlock 0 --rpc --rpccorsdomain="*" --rpcaddr "0.0.0.0"
+# Mac OS X
+$ geth --fast --cache 512 -ipcpath ~/Library/Ethereum/geth.ipc --networkid 1234 --datadir private_net --unlock 0 --rpc --rpccorsdomain="*" --rpcaddr "0.0.0.0"
+
+# Linux
+$ geth --fast --cache 512 -ipcpath ~/.ethereum/geth.ipc --networkid 1234 --datadir private_net --unlock 0 --rpc --rpccorsdomain="*" --rpcaddr "0.0.0.0"
 ```
 
-Start mining from another terminal
+Start mining from another terminal:
 
 ```bash
 $ geth attach
 > miner.start(1)
+```
+
+Stop mining from another terminal:
+
+```bash
+> miner.stop()
 ```

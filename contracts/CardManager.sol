@@ -1,7 +1,9 @@
 pragma solidity ^0.4.2;
 
+import "Mortal.sol";
+
 // Contract to manage card creation and transfers
-contract CardManager {
+contract CardManager is Mortal {
   Card[] public cards;
 
   struct Card {

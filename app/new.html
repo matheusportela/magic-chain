@@ -33,44 +33,30 @@
     </div>
   </nav>
 
-  <div class="jumbotron">
-    <div class="container">
-      <h1>Magic Chain</h1>
-      <p>Trade your Magic: The Gathering&trade; cards with blockchain technology</p>
-    </div>
-  </div>
-
   <div class="container">
     <div>
-      <h2>Trades</h2>
+      <h1>New trade</h1>
 
-      <div style="text-align: right; margin-bottom: 10px; margin-top: -45px;">
-        <a class="btn btn-success" href="/new.html">New</a>
-      </div>
-
-      <ul class="list-group">
-        <li class="list-group-item">
-          <span class="label label-default">user1</span>
-          Abattoir Ghoul &rarr; Arrogant Vampire
-          <button type="button" class="btn btn-success btn-xs pull-right">
-            <span class="glyphicon glyphicon-white glyphicon-ok"></span>
-          </button>
-        </li>
-        <li class="list-group-item">
-          <span class="label label-default">user2</span>
-          Hysterical Blindness &rarr; Sign in Blood
-          <button type="button" class="btn btn-success btn-xs pull-right">
-            <span class="glyphicon glyphicon-white glyphicon-ok"></span>
-          </button>
-        </li>
-        <li class="list-group-item">
-          <span class="label label-default">user3</span>
-          Tragic Slip &rarr; Brine Shaman
-          <button type="button" class="btn btn-danger btn-xs pull-right">
-            <span class="glyphicon glyphicon-white glyphicon-remove"></span>
-          </button>
-        </li>
-      </ul>
+      <form>
+        <div class="form-group">
+          <label for="owned-card">Owned card:</label>
+          <input type="text" class="form-control" id="owned-card">
+        </div>
+        <div class="form-group">
+          <label for="wanted-card">Wanted card:</label>
+          <input type="text" class="form-control" id="wanted-card">
+        </div>
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" class="form-control" id="username">
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" class="form-control" id="password">
+        </div>
+        <a class="btn btn-danger" href="/">Cancel</a>
+        <button type="submit" class="btn btn-success pull-right">Confirm</button>
+      </form>
     </div>
 
     <hr>

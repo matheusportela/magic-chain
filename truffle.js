@@ -3,6 +3,7 @@ module.exports = {
     "index.html": "index.html",
     "js/": "js/",
     "css/": "css/",
+    "fonts/": "fonts/",
     "img/": "img/"
   },
   rpc: {

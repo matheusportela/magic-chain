@@ -141,47 +141,53 @@
   <script src="js/app.js"></script>
 
   <script type="text/javascript">
+    var numTrades = 0;
+
     function addOpenTrade(ownedCard, wantedCard, user) {
-      var html = $('#trades-list').html();
-      html += '<li class="list-group-item">';
+      numTrades += 1;
+      var html = ''
+      html += '<li class="list-group-item" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + user + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <a href="#confirm-trade-modal" role="button" class="btn btn-success btn-xs pull-right" data-toggle="modal">';
       html += '    <span class="glyphicon glyphicon-white glyphicon-ok"></span>';
       html += '  </a>';
       html += '</li>';
-      $('#trades-list').html(html);
+      $('#trades-list').prepend(html);
     }
 
     function addOwnTrade(ownedCard, wantedCard, user) {
-      var html = $('#trades-list').html();
-      html += '<li class="list-group-item">';
+      numTrades += 1;
+      var html = ''
+      html += '<li class="list-group-item" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + user + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <a href="#cancel-trade-modal" role="button" class="btn btn-danger btn-xs pull-right" data-toggle="modal">';
       html += '    <span class="glyphicon glyphicon-white glyphicon-remove"></span>';
       html += '  </a>';
       html += '</li>';
-      $('#trades-list').html(html);
+      $('#trades-list').prepend(html);
     }
 
     function addSucessTrade(ownedCard, wantedCard, oldUser, newUser) {
-      var html = $('#trades-list').html();
-      html += '<li class="list-group-item trade-success">';
+      numTrades += 1;
+      var html = ''
+      html += '<li class="list-group-item trade-success" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + oldUser + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <span class="label label-default">' + newUser + '</span>\n';
       html += '</li>';
-      $('#trades-list').html(html);
+      $('#trades-list').prepend(html);
     }
 
     function addCanceledTrade(ownedCard, wantedCard, user) {
-      var html = $('#trades-list').html();
-      html += '<li class="list-group-item trade-canceled">';
+      numTrades += 1;
+      var html = ''
+      html += '<li class="list-group-item trade-canceled" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + user + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '</li>';
-      $('#trades-list').html(html);
+      $('#trades-list').prepend(html);
     }
 
     function mockTrades() {

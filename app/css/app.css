@@ -1,0 +1,22 @@
+:root {
+    --red: #c0392b;
+    --green: green;
+}
+
+body {
+    padding-top: 50px;
+}
+
+.trade-success .trade-description {
+    color: var(--green);
+}
+
+.trade-canceled .trade-description {
+    color: var(--red);
+    text-decoration: line-through;
+}
+
+.alert {
+    margin-top: 20px;
+    display: none;
+}

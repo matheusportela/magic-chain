@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Magic Chain - Trading Magic: The Gathering cards with blockchain technology</title>
+  <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css'>
+  <link href="css/bootstrap-theme.min.css" rel='stylesheet' type='text/css'>
+  <link href="css/app.css" rel='stylesheet' type='text/css'>
+  <link rel="shortcut icon" type="image/png" href="img/icon.png"/>
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+          <!-- <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button> -->
+        <a class="navbar-brand" href="/">Magic Chain</a>
+      </div>
+      <!-- <div id="navbar" class="navbar-collapse collapse">
+        <form class="navbar-form navbar-right">
+          <div class="form-group">
+            <input type="text" placeholder="Email" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="password" placeholder="Password" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-success">Sign in</button>
+        </form>
+      </div> -->
+    </div>
+  </nav>
+
+  <div class="jumbotron">
+    <div class="container">
+      <h1>Magic Chain</h1>
+      <p>Trade your Magic: The Gathering&trade; cards with blockchain technology</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div>
+      <h2>Trades</h2>
+
+      <div style="text-align: right; margin-bottom: 10px; margin-top: -45px;">
+        <a class="btn btn-success" href="/new.html">New</a>
+      </div>
+
+      <ul class="list-group" id="trades-list"></ul>
+    </div>
+
+    <hr>
+
+    <footer>
+      <center>
+        <p>2016 &copy; Os Três Hacketeiros - v1.0.0</p>
+      </center>
+    </footer>
+  </div>
+
+  <!-- Password modal -->
+  <div id="confirm-trade-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Confirm trade</h4>
+        </div>
+        <div class="modal-body">
+          <form id="confirm-trade-modal-form" onsubmit="return false;">
+            <div class="form-group">
+              <label for="account-id">Account ID:</label>
+              <input type="text" class="form-control" id="confirm-account-id" required>
+            </div>
+            <!-- <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" id="password">
+            </div> -->
+          </form>
+
+          <p>Are you sure you want to <strong>confirm</strong> the trade?</p>
+          <p class="text-warning"><small>This action is irreversible.</small></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" id="confirm-trade-btn">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cancel-trade-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Cancel trade</h4>
+        </div>
+        <div class="modal-body">
+          <form id="confirm-trade-modal-form" onsubmit="return false;">
+            <div class="form-group">
+              <label for="account-id">Account ID:</label>
+              <input type="text" class="form-control" id="cancel-account-id" required>
+            </div>
+            <!-- <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" id="password">
+            </div> -->
+          </form>
+
+          <p>Are you sure you want to <strong>cancel</strong> the trade?</p>
+          <p class="text-warning"><small>This action is irreversible.</small></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="cancel-trade-btn">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/jquery-3.1.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/web3.js"></script>
+  <script src="js/app.js"></script>
+
+  <script type="text/javascript">
+    function addOpenTrade(tradeID, ownedCard, wantedCard, accountID) {
+      var html = '';
+      html += '<li class="list-group-item trade-open" id="trade-' + tradeID + '">';
+      html += '  <span class="label label-default">' + accountID + '</span>\n';
+      html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
+      html += '  <div class="trade-buttons pull-right">';
+      html += '    <button class="btn btn-danger btn-xs list-cancel-btn">';
+      html += '      <span class="glyphicon glyphicon-white glyphicon-remove"></span>';
+      html += '    </button>';
+      html += '    <button class="btn btn-success btn-xs list-confirm-btn">';
+      html += '      <span class="glyphicon glyphicon-white glyphicon-ok"></span>';
+      html += '    </button>';
+      html += '  </div>';
+      html += '</li>';
+      $('#trades-list').prepend(html);
+
+      // Add callbacks to modal
+      $('.list-confirm-btn').click(function() {
+        $(this).parent().parent().addClass('active-trade');
+        $('#confirm-trade-modal').modal('show');
+      });
+
+      $('.list-cancel-btn').click(function() {
+        $(this).parent().parent().addClass('active-trade');
+        $('#cancel-trade-modal').modal('show');
+      });
+    }
+
+    function addOwnTrade(tradeID, ownedCard, wantedCard, accountID) {
+      var html = '';
+      html += '<li class="list-group-item trade-own" id="trade-' + tradeID + '">';
+      html += '  <span class="label label-default">' + accountID + '</span>\n';
+      html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
+      html += '  <button class="btn btn-danger btn-xs pull-right list-cancel-btn">';
+      html += '    <span class="glyphicon glyphicon-white glyphicon-remove"></span>';
+      html += '  </button>';
+      html += '</li>';
+      $('#trades-list').prepend(html);
+    }
+
+    function addSucessTrade(tradeID, ownedCard, wantedCard, oldUser, newUser) {
+      var html = '';
+      html += '<li class="list-group-item trade-success" id="trade-' + tradeID + '">';
+      html += '  <span class="label label-default">' + oldUser + '</span>\n';
+      html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
+      html += '  <span class="label label-default">' + newUser + '</span>\n';
+      html += '</li>';
+      $('#trades-list').prepend(html);
+    }
+
+    function addCanceledTrade(tradeID, ownedCard, wantedCard, accountID) {
+      var html = '';
+      html += '<li class="list-group-item trade-canceled" id="trade-' + tradeID + '">';
+      html += '  <span class="label label-default">' + accountID + '</span>\n';
+      html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
+      html += '</li>';
+      $('#trades-list').prepend(html);
+    }
+
+    function changeToSuccessTrade(tradeID, newUser) {
+      console.log('Trade ID:', tradeID);
+
+      if (!$(tradeID).hasClass('trade-open')) {
+        console.log('Trade is not open');
+        return;
+      }
+
+      tradeNumber = tradeID.substring(7, tradeID.length);
+      confirmTradeOnBlockchain(tradeNumber, newUser);
+    }
+
+    function changeToCanceledTrade(tradeID, accountID) {
+      if (!$(tradeID).hasClass('trade-open')) {
+        console.log('Trade is not open');
+        return;
+      }
+
+      tradeNumber = tradeID.substring(7, tradeID.length);
+      cancelTradeOnBlockchain(tradeNumber, accountID);
+    }
+
+    function updateTradeToSuccessOnList(tradeID, takerID) {
+      $(tradeID).removeClass('trade-open');
+      $(tradeID).addClass('trade-success');
+      $(tradeID).append('  <span class="label label-default">' + takerID + '</span>\n');
+      $(tradeID).children('.trade-buttons').remove();
+    }
+
+    function updateTradeToCancelOnList(tradeID) {
+      $(tradeID).removeClass('trade-open');
+      $(tradeID).addClass('trade-canceled');
+      $(tradeID).children('.trade-buttons').remove();
+    }
+
+    function mockTrades() {
+      console.log('Mocking trades');
+      addOpenTrade('Abattoir Ghoul', 'Arrogant Vampire', 'accountID1');
+      addOwnTrade('Hysterical Blindness', 'Sign in Blood', 'accountID2');
+      addSucessTrade('Tragic Slip', 'Brine Shaman', 'accountID3', 'accountID4');
+      addCanceledTrade('Lightning Bolt', 'Black Lotus', 'accountID4');
+    }
+
+    function populateTrades() {
+      var trades = fetchTradesFromBlockchain();
+      console.log('Trades:', trades);
+
+      for (var i = 0; i < trades.length; i++) {
+        trade = trades[i];
+
+        // Ignore "null" card
+        if (trade.ownerID == 0)
+          continue;
+
+        switch (trade.status) {
+          case (TRADE_STATUS_OPEN):
+            addOpenTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID);
+            break;
+          case (TRADE_STATUS_SUCCESSFUL):
+            addSucessTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID, trade.takerID);
+            break;
+          case (TRADE_STATUS_CANCELLED):
+            addCanceledTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID);
+            break;
+        }
+      }
+    }
+
+    $(function() {
+      // mockTrades();
+      populateTrades();
+
+      watchNewTrades(function(trade) {
+        addOpenTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID);
+      });
+
+      watchSuccessTrades(function(trade) {
+        var tradeID = '#trade-' + trade.tradeID;
+        updateTradeToSuccessOnList(tradeID, trade.takerID);
+      });
+
+      watchCancelTrades(function(trade) {
+        var tradeID = '#trade-' + trade.tradeID;
+        updateTradeToCancelOnList(tradeID);
+      });
+
+      $('#confirm-trade-btn').click(function() {
+        if ($('#confirm-account-id')[0].checkValidity()) {
+          var tradeID = '#' + $('.active-trade')[0].id;
+          var accountID = $('#confirm-account-id').val();
+          changeToSuccessTrade(tradeID, accountID);
+          $('.active-trade').removeClass('active-trade');
+          $('#confirm-trade-modal').modal('hide');
+        } else {
+          $('#confirm-account-id').focus();
+        }
+      });
+
+      $('#cancel-trade-btn').click(function() {
+        if ($('#cancel-account-id')[0].checkValidity()) {
+          var tradeID = '#' + $('.active-trade')[0].id;
+          var accountID = $('#cancel-account-id').val();
+          changeToCanceledTrade(tradeID, accountID);
+          $('.active-trade').removeClass('active-trade');
+          $('#cancel-trade-modal').modal('hide');
+        } else  {
+          $('#cancel-account-id').focus();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

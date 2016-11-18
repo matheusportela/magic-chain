@@ -131,7 +131,7 @@
 
     function addOpenTrade(ownedCard, wantedCard, accountID) {
       numTrades += 1;
-      var html = ''
+      var html = '';
       html += '<li class="list-group-item trade-open" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
@@ -149,7 +149,7 @@
 
     function addOwnTrade(ownedCard, wantedCard, accountID) {
       numTrades += 1;
-      var html = ''
+      var html = '';
       html += '<li class="list-group-item trade-own" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
@@ -162,7 +162,7 @@
 
     function addSucessTrade(ownedCard, wantedCard, oldUser, newUser) {
       numTrades += 1;
-      var html = ''
+      var html = '';
       html += '<li class="list-group-item trade-success" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + oldUser + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
@@ -173,7 +173,7 @@
 
     function addCanceledTrade(ownedCard, wantedCard, accountID) {
       numTrades += 1;
-      var html = ''
+      var html = '';
       html += '<li class="list-group-item trade-canceled" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';

@@ -9,12 +9,13 @@ contract Billboard is Mortal {
     struct TradeIntention {
         uint id;
         address owner;
+        address taker;
         string cardOffered;
         string cardWanted;
         TradeStatus status;
     }
 
-    enum TradeStatus { OPEN, CLOSED, CANCELLED }
+    enum TradeStatus { OPEN, SUCCESSFUL, CANCELLED }
 
     event NewTradeIntention(uint id, address owner, string cardOffered, string cardWanted);
 
@@ -34,10 +35,12 @@ contract Billboard is Mortal {
         NewTradeIntention(trade.id, trade.owner, trade.cardOffered, trade.cardWanted);
     }
 
-    function getTradeIntention(uint tradeID) returns (address owner, string cardOffered, string cardWanted,
+    function getTradeIntention(uint tradeID) returns (address owner, address taker,
+                                                      string cardOffered, string cardWanted,
                                                       TradeStatus status) {
         TradeIntention trade = tradeIntentions[tradeID];
         owner = trade.owner;
+        taker = trade.taker;
         cardOffered = trade.cardOffered;
         cardWanted = trade.cardWanted;
         status = trade.status;
@@ -47,6 +50,14 @@ contract Billboard is Mortal {
         TradeIntention trade = tradeIntentions[tradeID];
         if (trade.owner == sender)
             trade.status = TradeStatus.CANCELLED;
+    }
+
+    function takeTradeIntention(uint tradeID, address taker) {
+        TradeIntention trade = tradeIntentions[tradeID];
+        if (trade.status == TradeStatus.OPEN) {
+            trade.taker = taker;
+            trade.status = TradeStatus.SUCCESSFUL;
+        }
     }
 
     function getTradeIntentionListSize() returns (uint) {

@@ -79,20 +79,16 @@
   <script src="js/app.js"></script>
 
   <script type="text/javascript">
-    function createTrade(ownedCard, wantedCard, username, callback) {
-      var err = false;
-
-      // TODO: Send trade to the blockchain
-
-      callback(err);
+    function createTrade(ownedCard, wantedCard, username) {
+      createTradeOnBlockchain(ownedCard, wantedCard, username, successCallback, failCallback);
     }
 
-    function onResponse(err) {
-      if (err) {
-        $('.alert').show();
-      } else {
-        window.location = '/';
-      }
+    function successCallback() {
+      window.location = '/';
+    }
+
+    function failCallback() {
+      $('.alert').show();
     }
 
     $(function() {
@@ -111,7 +107,7 @@
         console.log('username:', username);
 
         console.log('Sending trade to blockchain');
-        createTrade(ownedCard, wantedCard, username, onResponse);
+        createTrade(ownedCard, wantedCard, username);
       });
     });
   </script>

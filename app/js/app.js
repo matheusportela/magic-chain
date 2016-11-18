@@ -1,16 +1,44 @@
+// Loading Web3 package to interact with blockchains
 var Web3 = require('web3');
-var web3 = new Web3();
+
+if (typeof web3 !== 'undefined')
+  web3 = new Web3(web3.currentProvider);
+else
+  web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
+// Hard-coding the account that's paying for the transactions
+var defaultAccount = web3.eth.accounts[0];
+
+// Hard-coding the default gas price
+var defaultGasPrice = 20000000000;
+
+// Instantiate Billboard contract
+// Caution: both its ABI and address in the blockchain are hard-coded here.
+// This means whenever we change the blockchain, we'll need to update these
+// data, otherwise things won't work.
+//
+// Ideally, this would work:
+//   var billboard = Billboard.deployed();
+//
+// However, I couldn't make it work. It seems to be some problem with truffle
+// and the Pudding package.
+var billboardABI = [{"constant":false,"inputs":[{"name":"tradeID","type":"uint256"},{"name":"taker","type":"address"}],"name":"takeTradeIntention","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"tradeID","type":"uint256"}],"name":"getTradeIntention","outputs":[{"name":"owner","type":"address"},{"name":"taker","type":"address"},{"name":"cardOffered","type":"string"},{"name":"cardWanted","type":"string"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"tradeIntentions","outputs":[{"name":"id","type":"uint256"},{"name":"owner","type":"address"},{"name":"taker","type":"address"},{"name":"cardOffered","type":"string"},{"name":"cardWanted","type":"string"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"owner","type":"address"},{"name":"cardOffered","type":"string"},{"name":"cardWanted","type":"string"}],"name":"newTradeIntention","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"getTradeIntentionListSize","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"tradeID","type":"uint256"},{"name":"sender","type":"address"}],"name":"cancelTradeIntention","outputs":[],"payable":false,"type":"function"},{"inputs":[],"type":"constructor"},{"payable":false,"type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"id","type":"uint256"},{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"cardOffered","type":"string"},{"indexed":false,"name":"cardWanted","type":"string"}],"name":"NewTradeIntention","type":"event"}];
+var billboardAddress = '0x9b6cce5d602697bcc7f3b892414b5d9f732541c9';
+var Billboard = web3.eth.contract(billboardABI);
+var billboard = Billboard.at(billboardAddress);
+var billboardGas = 4700000;
+
+function createTradeOnBlockchain(ownedCard, wantedCard, owner, successCallback, failCallback) {
+  try {
+    var result = billboard.newTradeIntention(owner, ownedCard, wantedCard, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
+    console.log('Success (' + result + ')');
+    successCallback();
+  } catch (err) {
+    console.log('Fail:', err);
+    failCallback();
+  }
+}
 
 $(window).on('load', function() {
-  web3.eth.getAccounts(function(err, accs) {
-    if (err != null) {
-      console.log("There was an error fetching your accounts.");
-      return;
-    }
-
-    if (accs.length == 0) {
-      console.log("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
-      return;
-    }
-  });
+  console.log('Default account:', defaultAccount);
 });

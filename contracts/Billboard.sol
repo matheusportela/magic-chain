@@ -18,6 +18,8 @@ contract Billboard is Mortal {
     enum TradeStatus { OPEN, SUCCESSFUL, CANCELLED }
 
     event NewTradeIntention(uint id, address owner, string cardOffered, string cardWanted);
+    event TakeTradeIntention(uint id, address taker);
+    event CancelTradeIntention(uint id, address sender);
 
     function Billboard() {
         // Create trade intention with ID 0 to represent a null trade intention
@@ -48,8 +50,10 @@ contract Billboard is Mortal {
 
     function cancelTradeIntention(uint tradeID, address sender) {
         TradeIntention trade = tradeIntentions[tradeID];
-        if (trade.owner == sender)
+        if (trade.owner == sender) {
             trade.status = TradeStatus.CANCELLED;
+            CancelTradeIntention(tradeID, sender);
+        }
     }
 
     function takeTradeIntention(uint tradeID, address taker) {
@@ -57,6 +61,7 @@ contract Billboard is Mortal {
         if (trade.status == TradeStatus.OPEN) {
             trade.taker = taker;
             trade.status = TradeStatus.SUCCESSFUL;
+            TakeTradeIntention(tradeID, taker);
         }
     }
 

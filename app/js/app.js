@@ -28,6 +28,34 @@ var Billboard = web3.eth.contract(billboardABI);
 var billboard = Billboard.at(billboardAddress);
 var billboardGas = 4700000;
 
+// Trade statuses
+var TRADE_STATUS_OPEN = 0;
+var TRADE_STATUS_SUCCESSFUL = 1;
+var TRADE_STATUS_CANCELLED = 2;
+
+function fetchTradesFromBlockchain() {
+  var numTrades = billboard.getTradeIntentionListSize.call().toNumber();
+  var trades = []
+
+  for (var i = 0; i < numTrades; i++) {
+    trades.push(fetchTradeFromBlockchain(i));
+  }
+
+  return trades;
+}
+
+function fetchTradeFromBlockchain(tradeID) {
+  var tradeObject = billboard.tradeIntentions.call(tradeID);
+  var trade = {
+    owner: tradeObject[1],
+    taker: tradeObject[2],
+    ownedCard: tradeObject[3],
+    wantedCard: tradeObject[4],
+    status: tradeObject[5].toNumber()
+   };
+  return trade;
+}
+
 function createTradeOnBlockchain(ownedCard, wantedCard, owner, successCallback, failCallback) {
   try {
     var result = billboard.newTradeIntention(owner, ownedCard, wantedCard, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });

@@ -197,8 +197,30 @@
       addCanceledTrade('Lightning Bolt', 'Black Lotus', 'user4');
     }
 
+    function populateTrades() {
+      var trades = fetchTradesFromBlockchain();
+      console.log('Trades:', trades);
+
+      for (var i = 0; i < trades.length; i++) {
+        trade = trades[i];
+
+        switch (trade.status) {
+          case (TRADE_STATUS_OPEN):
+            addOpenTrade(trade.ownedCard, trade.wantedCard, trade.owner);
+            break;
+          case (TRADE_STATUS_SUCCESSFUL):
+            addSucessTrade(trade.ownedCard, trade.wantedCard, trade.owner, trade.taker);
+            break;
+          case (TRADE_STATUS_CANCELLED):
+            addCanceledTrade(trade.ownedCard, trade.wantedCard, trade.owner);
+            break;
+        }
+      }
+    }
+
     $(function() {
-      mockTrades();
+      // mockTrades();
+      populateTrades();
 
       $('.list-confirm-btn').click(function() {
         $(this).parent().addClass('active-trade');

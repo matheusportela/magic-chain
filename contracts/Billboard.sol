@@ -8,19 +8,19 @@ contract Billboard is Mortal {
 
     struct TradeIntention {
         uint id;
-        address owner;
+        string owner;
         string cardOffered;
         string cardWanted;
     }
 
-    event NewTradeIntention(uint id, address owner, string cardOffered, string cardWanted);
+    event NewTradeIntention(uint id, string owner, string cardOffered, string cardWanted);
 
     function Billboard() {
         // Create trade intention with ID 0 to represent a null trade intention
-        newTradeIntention(0, 'null', 'null');
+        newTradeIntention('null', 'null', 'null');
     }
 
-    function newTradeIntention(address owner, string cardOffered, string cardWanted) {
+    function newTradeIntention(string owner, string cardOffered, string cardWanted) {
         uint tradeID = tradeIntentions.length++;
         TradeIntention trade = tradeIntentions[tradeID];
         trade.id = tradeID;
@@ -30,7 +30,7 @@ contract Billboard is Mortal {
         NewTradeIntention(trade.id, trade.owner, trade.cardOffered, trade.cardWanted);
     }
 
-    function getTradeIntention(uint tradeID) returns (address owner, string cardOffered, string cardWanted) {
+    function getTradeIntention(uint tradeID) returns (string owner, string cardOffered, string cardWanted) {
         TradeIntention trade = tradeIntentions[tradeID];
         owner = trade.owner;
         cardOffered = trade.cardOffered;

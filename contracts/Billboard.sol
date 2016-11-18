@@ -49,6 +49,10 @@ contract Billboard is Mortal {
             trade.status = TradeStatus.CANCELLED;
     }
 
+    function getTradeIntentionListSize() returns (uint) {
+        return tradeIntentions.length;
+    }
+
     // Refuse receiving ether in this contract
     function () {
         throw;

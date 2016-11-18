@@ -56,9 +56,9 @@ function fetchTradeFromBlockchain(tradeID) {
   return trade;
 }
 
-function createTradeOnBlockchain(ownedCard, wantedCard, owner, successCallback, failCallback) {
+function createTradeOnBlockchain(ownedCard, wantedCard, ownerID, successCallback, failCallback) {
   try {
-    var result = billboard.newTradeIntention(owner, ownedCard, wantedCard, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
+    var result = billboard.newTradeIntention(ownerID, ownedCard, wantedCard, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
     console.log('Success (' + result + ')');
     successCallback();
   } catch (err) {
@@ -67,9 +67,9 @@ function createTradeOnBlockchain(ownedCard, wantedCard, owner, successCallback, 
   }
 }
 
-function confirmTradeOnBlockchain(tradeID, taker, successCallback, failCallback) {
+function confirmTradeOnBlockchain(tradeID, takerID, successCallback, failCallback) {
   try {
-    var result = billboard.takeTradeIntention(tradeID, taker, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
+    var result = billboard.takeTradeIntention(tradeID, takerID, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
     console.log('Success');
     successCallback();
   } catch (err) {
@@ -78,9 +78,9 @@ function confirmTradeOnBlockchain(tradeID, taker, successCallback, failCallback)
   }
 }
 
-function cancelTradeOnBlockchain(tradeID, owner, successCallback, failCallback) {
+function cancelTradeOnBlockchain(tradeID, ownerID, successCallback, failCallback) {
   try {
-    var result = billboard.cancelTradeIntention(tradeID, owner, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
+    var result = billboard.cancelTradeIntention(tradeID, ownerID, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
     console.log('Success');
     successCallback();
   } catch (err) {

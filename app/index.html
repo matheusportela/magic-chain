@@ -71,8 +71,8 @@
         <div class="modal-body">
           <form id="confirm-trade-modal-form" onsubmit="return false;">
             <div class="form-group">
-              <label for="username">Username:</label>
-              <input type="text" class="form-control" id="confirm-username" required>
+              <label for="account-id">Account ID:</label>
+              <input type="text" class="form-control" id="confirm-account-id" required>
             </div>
             <!-- <div class="form-group">
               <label for="password">Password:</label>
@@ -98,8 +98,8 @@
         <div class="modal-body">
           <form id="confirm-trade-modal-form" onsubmit="return false;">
             <div class="form-group">
-              <label for="username">Username:</label>
-              <input type="text" class="form-control" id="cancel-username" required>
+              <label for="account-id">Account ID:</label>
+              <input type="text" class="form-control" id="cancel-account-id" required>
             </div>
             <!-- <div class="form-group">
               <label for="password">Password:</label>
@@ -126,11 +126,11 @@
   <script type="text/javascript">
     var numTrades = 0;
 
-    function addOpenTrade(ownedCard, wantedCard, user) {
+    function addOpenTrade(ownedCard, wantedCard, accountID) {
       numTrades += 1;
       var html = ''
       html += '<li class="list-group-item trade-open" id="trade-' + numTrades + '">';
-      html += '  <span class="label label-default">' + user + '</span>\n';
+      html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <div class="trade-buttons pull-right">';
       html += '    <button class="btn btn-danger btn-xs list-cancel-btn">';
@@ -144,11 +144,11 @@
       $('#trades-list').prepend(html);
     }
 
-    function addOwnTrade(ownedCard, wantedCard, user) {
+    function addOwnTrade(ownedCard, wantedCard, accountID) {
       numTrades += 1;
       var html = ''
       html += '<li class="list-group-item trade-own" id="trade-' + numTrades + '">';
-      html += '  <span class="label label-default">' + user + '</span>\n';
+      html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <button class="btn btn-danger btn-xs pull-right list-cancel-btn">';
       html += '    <span class="glyphicon glyphicon-white glyphicon-remove"></span>';
@@ -168,11 +168,11 @@
       $('#trades-list').prepend(html);
     }
 
-    function addCanceledTrade(ownedCard, wantedCard, user) {
+    function addCanceledTrade(ownedCard, wantedCard, accountID) {
       numTrades += 1;
       var html = ''
       html += '<li class="list-group-item trade-canceled" id="trade-' + numTrades + '">';
-      html += '  <span class="label label-default">' + user + '</span>\n';
+      html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '</li>';
       $('#trades-list').prepend(html);
@@ -198,14 +198,14 @@
       });
     }
 
-    function changeToCanceledTrade(tradeID, user) {
+    function changeToCanceledTrade(tradeID, accountID) {
       if (!$(tradeID).hasClass('trade-open')) {
         console.log('Trade is not open');
         return;
       }
 
       tradeNumber = tradeID.substring(7, tradeID.length);
-      cancelTradeOnBlockchain(tradeNumber, user, function() {
+      cancelTradeOnBlockchain(tradeNumber, accountID, function() {
         // Success
         $(tradeID).removeClass('trade-open');
         $(tradeID).addClass('trade-canceled');
@@ -217,10 +217,10 @@
 
     function mockTrades() {
       console.log('Mocking trades');
-      addOpenTrade('Abattoir Ghoul', 'Arrogant Vampire', 'user1');
-      addOwnTrade('Hysterical Blindness', 'Sign in Blood', 'user2');
-      addSucessTrade('Tragic Slip', 'Brine Shaman', 'user3', 'user4');
-      addCanceledTrade('Lightning Bolt', 'Black Lotus', 'user4');
+      addOpenTrade('Abattoir Ghoul', 'Arrogant Vampire', 'accountID1');
+      addOwnTrade('Hysterical Blindness', 'Sign in Blood', 'accountID2');
+      addSucessTrade('Tragic Slip', 'Brine Shaman', 'accountID3', 'accountID4');
+      addCanceledTrade('Lightning Bolt', 'Black Lotus', 'accountID4');
     }
 
     function populateTrades() {
@@ -259,26 +259,26 @@
       });
 
       $('#confirm-trade-btn').click(function() {
-        if ($('#confirm-username')[0].checkValidity()) {
+        if ($('#confirm-account-id')[0].checkValidity()) {
           var tradeID = '#' + $('.active-trade')[0].id;
-          var user = $('#confirm-username').val();
-          changeToSuccessTrade(tradeID, user);
+          var accountID = $('#confirm-account-id').val();
+          changeToSuccessTrade(tradeID, accountID);
           $('.active-trade').removeClass('active-trade');
           $('#confirm-trade-modal').modal('hide');
         } else {
-          $('#confirm-username').focus();
+          $('#confirm-account-id').focus();
         }
       });
 
       $('#cancel-trade-btn').click(function() {
-        if ($('#cancel-username')[0].checkValidity()) {
+        if ($('#cancel-account-id')[0].checkValidity()) {
           var tradeID = '#' + $('.active-trade')[0].id;
-          var user = $('#cancel-username').val();
-          changeToCanceledTrade(tradeID, user);
+          var accountID = $('#cancel-account-id').val();
+          changeToCanceledTrade(tradeID, accountID);
           $('.active-trade').removeClass('active-trade');
           $('#cancel-trade-modal').modal('hide');
         } else  {
-          $('#cancel-username').focus();
+          $('#cancel-account-id').focus();
         }
       });
     });

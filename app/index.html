@@ -48,31 +48,7 @@
         <a class="btn btn-success" href="/new.html">New</a>
       </div>
 
-      <ul class="list-group" id="trades-list">
-        <!-- <li class="list-group-item">
-          <span class="label label-default">user1</span>
-          <span class="trade-description">Abattoir Ghoul &rarr; Arrogant Vampire</span>
-          <a href="#confirm-trade-modal" role="button" class="btn btn-success btn-xs pull-right" data-toggle="modal">
-            <span class="glyphicon glyphicon-white glyphicon-ok"></span>
-          </a>
-        </li>
-        <li class="list-group-item">
-          <span class="label label-default">user2</span>
-          <span class="trade-description">Hysterical Blindness &rarr; Sign in Blood</span>
-          <a href="#cancel-trade-modal" role="button" class="btn btn-danger btn-xs pull-right" data-toggle="modal">
-            <span class="glyphicon glyphicon-white glyphicon-remove"></span>
-          </a>
-        </li>
-        <li class="list-group-item trade-success">
-          <span class="label label-default">user3</span>
-          <span class="trade-description">Tragic Slip &rarr; Brine Shaman</span>
-          <span class="label label-default">user4</span>
-        </li>
-        <li class="list-group-item trade-canceled">
-          <span class="label label-default">user4</span>
-          <span class="trade-description">Lightning Bolt &rarr; Black Lotus</span>
-        </li> -->
-      </ul>
+      <ul class="list-group" id="trades-list"></ul>
     </div>
 
     <hr>
@@ -93,18 +69,20 @@
           <h4 class="modal-title">Confirm trade</h4>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" class="form-control" id="username">
-          </div>
-          <!-- <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password">
-          </div> -->
+          <form id="confirm-trade-modal-form" onsubmit="return false;">
+            <div class="form-group">
+              <label for="username">Username:</label>
+              <input type="text" class="form-control" id="confirm-username" required>
+            </div>
+            <!-- <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" id="password">
+            </div> -->
+          </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-success">OK</button>
+          <button type="button" class="btn btn-success" id="confirm-trade-btn">OK</button>
         </div>
       </div>
     </div>
@@ -118,18 +96,12 @@
           <h4 class="modal-title">Cancel trade</h4>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" class="form-control" id="username">
-          </div>
-          <!-- <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password">
-          </div> -->
+          <p>Are you sure you want to <strong>cancel</strong> the trade?</p>
+          <p class="text-warning"><small>This action is irreversible.</small></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger">OK</button>
+          <button type="button" class="btn btn-danger" id="cancel-trade-btn">OK</button>
         </div>
       </div>
     </div>
@@ -146,12 +118,12 @@
     function addOpenTrade(ownedCard, wantedCard, user) {
       numTrades += 1;
       var html = ''
-      html += '<li class="list-group-item" id="trade-' + numTrades + '">';
+      html += '<li class="list-group-item trade-open" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + user + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
-      html += '  <a href="#confirm-trade-modal" role="button" class="btn btn-success btn-xs pull-right" data-toggle="modal">';
+      html += '  <button class="btn btn-success btn-xs pull-right list-confirm-btn">';
       html += '    <span class="glyphicon glyphicon-white glyphicon-ok"></span>';
-      html += '  </a>';
+      html += '  </button>';
       html += '</li>';
       $('#trades-list').prepend(html);
     }
@@ -159,12 +131,12 @@
     function addOwnTrade(ownedCard, wantedCard, user) {
       numTrades += 1;
       var html = ''
-      html += '<li class="list-group-item" id="trade-' + numTrades + '">';
+      html += '<li class="list-group-item trade-own" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + user + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
-      html += '  <a href="#cancel-trade-modal" role="button" class="btn btn-danger btn-xs pull-right" data-toggle="modal">';
+      html += '  <button class="btn btn-danger btn-xs pull-right list-cancel-btn">';
       html += '    <span class="glyphicon glyphicon-white glyphicon-remove"></span>';
-      html += '  </a>';
+      html += '  </button>';
       html += '</li>';
       $('#trades-list').prepend(html);
     }
@@ -190,6 +162,33 @@
       $('#trades-list').prepend(html);
     }
 
+    function changeToSuccessTrade(tradeId, newUser) {
+      if (!$(tradeId).hasClass('trade-open')) {
+        console.log('Trade is not open');
+        return;
+      }
+
+      // TODO: Update trade status in the blockchain
+
+      $(tradeId).removeClass('trade-open');
+      $(tradeId).addClass('trade-success');
+      $(tradeId).append('  <span class="label label-default">' + newUser + '</span>\n');
+      $(tradeId).children('button').remove();
+    }
+
+    function changeToCanceledTrade(tradeId) {
+      if (!$(tradeId).hasClass('trade-own')) {
+        console.log('Trade is not own');
+        return;
+      }
+
+      // TODO: Update trade status in the blockchain
+
+      $(tradeId).removeClass('trade-own');
+      $(tradeId).addClass('trade-canceled');
+      $(tradeId).children('button').remove();
+    }
+
     function mockTrades() {
       console.log('Mocking trades');
       addOpenTrade('Abattoir Ghoul', 'Arrogant Vampire', 'user1');
@@ -200,6 +199,35 @@
 
     $(function() {
       mockTrades();
+
+      $('.list-confirm-btn').click(function() {
+        $(this).parent().addClass('active-trade');
+        $('#confirm-trade-modal').modal('show');
+      });
+
+      $('.list-cancel-btn').click(function() {
+        $(this).parent().addClass('active-trade');
+        $('#cancel-trade-modal').modal('show');
+      });
+
+      $('#confirm-trade-btn').click(function() {
+        if ($('#confirm-username')[0].checkValidity()) {
+          var tradeId = '#' + $('.active-trade')[0].id;
+          var user = $('#confirm-username').val();
+          changeToSuccessTrade(tradeId, user);
+          $('.active-trade').removeClass('active-trade');
+          $('#confirm-trade-modal').modal('hide');
+        } else {
+          $('#confirm-username').focus();
+        }
+      });
+
+      $('#cancel-trade-btn').click(function() {
+        var tradeId = '#' + $('.active-trade')[0].id;
+        changeToCanceledTrade(tradeId);
+        $('.active-trade').removeClass('active-trade');
+        $('#cancel-trade-modal').modal('hide');
+      });
     });
   </script>
 </body>

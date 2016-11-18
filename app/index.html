@@ -162,31 +162,35 @@
       $('#trades-list').prepend(html);
     }
 
-    function changeToSuccessTrade(tradeId, newUser) {
-      if (!$(tradeId).hasClass('trade-open')) {
+    function changeToSuccessTrade(tradeID, newUser) {
+      if (!$(tradeID).hasClass('trade-open')) {
         console.log('Trade is not open');
         return;
       }
 
-      // TODO: Update trade status in the blockchain
-
-      $(tradeId).removeClass('trade-open');
-      $(tradeId).addClass('trade-success');
-      $(tradeId).append('  <span class="label label-default">' + newUser + '</span>\n');
-      $(tradeId).children('button').remove();
+      tradeNumber = tradeID.substring(7, tradeID.length);
+      confirmTradeOnBlockchain(tradeNumber, newUser, function() {
+        // Success
+        $(tradeID).removeClass('trade-open');
+        $(tradeID).addClass('trade-success');
+        $(tradeID).append('  <span class="label label-default">' + newUser + '</span>\n');
+        $(tradeID).children('button').remove();
+      }, function() {
+        // Fail
+      });
     }
 
-    function changeToCanceledTrade(tradeId) {
-      if (!$(tradeId).hasClass('trade-own')) {
+    function changeToCanceledTrade(tradeID) {
+      if (!$(tradeID).hasClass('trade-own')) {
         console.log('Trade is not own');
         return;
       }
 
       // TODO: Update trade status in the blockchain
 
-      $(tradeId).removeClass('trade-own');
-      $(tradeId).addClass('trade-canceled');
-      $(tradeId).children('button').remove();
+      $(tradeID).removeClass('trade-own');
+      $(tradeID).addClass('trade-canceled');
+      $(tradeID).children('button').remove();
     }
 
     function mockTrades() {
@@ -234,9 +238,9 @@
 
       $('#confirm-trade-btn').click(function() {
         if ($('#confirm-username')[0].checkValidity()) {
-          var tradeId = '#' + $('.active-trade')[0].id;
+          var tradeID = '#' + $('.active-trade')[0].id;
           var user = $('#confirm-username').val();
-          changeToSuccessTrade(tradeId, user);
+          changeToSuccessTrade(tradeID, user);
           $('.active-trade').removeClass('active-trade');
           $('#confirm-trade-modal').modal('hide');
         } else {
@@ -245,8 +249,8 @@
       });
 
       $('#cancel-trade-btn').click(function() {
-        var tradeId = '#' + $('.active-trade')[0].id;
-        changeToCanceledTrade(tradeId);
+        var tradeID = '#' + $('.active-trade')[0].id;
+        changeToCanceledTrade(tradeID);
         $('.active-trade').removeClass('active-trade');
         $('#cancel-trade-modal').modal('hide');
       });

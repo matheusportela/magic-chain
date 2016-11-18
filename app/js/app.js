@@ -23,7 +23,7 @@ var defaultGasPrice = 20000000000;
 // However, I couldn't make it work. It seems to be some problem with truffle
 // and the Pudding package.
 var billboardABI = [{"constant":false,"inputs":[{"name":"tradeID","type":"uint256"},{"name":"taker","type":"address"}],"name":"takeTradeIntention","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"tradeID","type":"uint256"}],"name":"getTradeIntention","outputs":[{"name":"owner","type":"address"},{"name":"taker","type":"address"},{"name":"cardOffered","type":"string"},{"name":"cardWanted","type":"string"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"tradeIntentions","outputs":[{"name":"id","type":"uint256"},{"name":"owner","type":"address"},{"name":"taker","type":"address"},{"name":"cardOffered","type":"string"},{"name":"cardWanted","type":"string"},{"name":"status","type":"uint8"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"owner","type":"address"},{"name":"cardOffered","type":"string"},{"name":"cardWanted","type":"string"}],"name":"newTradeIntention","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"getTradeIntentionListSize","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"tradeID","type":"uint256"},{"name":"sender","type":"address"}],"name":"cancelTradeIntention","outputs":[],"payable":false,"type":"function"},{"inputs":[],"type":"constructor"},{"payable":false,"type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"id","type":"uint256"},{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"cardOffered","type":"string"},{"indexed":false,"name":"cardWanted","type":"string"}],"name":"NewTradeIntention","type":"event"}];
-var billboardAddress = '0x9b6cce5d602697bcc7f3b892414b5d9f732541c9';
+var billboardAddress = '0xfc217c83d3ca885466aed10683105eae114a02f8';
 var Billboard = web3.eth.contract(billboardABI);
 var billboard = Billboard.at(billboardAddress);
 var billboardGas = 4700000;
@@ -47,8 +47,8 @@ function fetchTradesFromBlockchain() {
 function fetchTradeFromBlockchain(tradeID) {
   var tradeObject = billboard.tradeIntentions.call(tradeID);
   var trade = {
-    owner: tradeObject[1],
-    taker: tradeObject[2],
+    owner: parseInt(tradeObject[1], 16),
+    taker: parseInt(tradeObject[2], 16),
     ownedCard: tradeObject[3],
     wantedCard: tradeObject[4],
     status: tradeObject[5].toNumber()
@@ -60,6 +60,17 @@ function createTradeOnBlockchain(ownedCard, wantedCard, owner, successCallback, 
   try {
     var result = billboard.newTradeIntention(owner, ownedCard, wantedCard, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
     console.log('Success (' + result + ')');
+    successCallback();
+  } catch (err) {
+    console.log('Fail:', err);
+    failCallback();
+  }
+}
+
+function confirmTradeOnBlockchain(tradeID, taker, successCallback, failCallback) {
+  try {
+    var result = billboard.takeTradeIntention(tradeID, taker, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
+    console.log('Success');
     successCallback();
   } catch (err) {
     console.log('Fail:', err);

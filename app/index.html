@@ -11,15 +11,15 @@
   <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+          <!-- <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </button>
+          </button> -->
         <a class="navbar-brand" href="/">Magic Chain</a>
       </div>
-      <div id="navbar" class="navbar-collapse collapse">
+      <!-- <div id="navbar" class="navbar-collapse collapse">
         <form class="navbar-form navbar-right">
           <div class="form-group">
             <input type="text" placeholder="Email" class="form-control">
@@ -29,7 +29,7 @@
           </div>
           <button type="submit" class="btn btn-success">Sign in</button>
         </form>
-      </div>
+      </div> -->
     </div>
   </nav>
 
@@ -51,24 +51,26 @@
       <ul class="list-group">
         <li class="list-group-item">
           <span class="label label-default">user1</span>
-          Abattoir Ghoul &rarr; Arrogant Vampire
+          <span class="trade-description">Abattoir Ghoul &rarr; Arrogant Vampire</span>
           <a href="#password-modal" role="button" class="btn btn-success btn-xs pull-right" data-toggle="modal">
             <span class="glyphicon glyphicon-white glyphicon-ok"></span>
           </a>
         </li>
         <li class="list-group-item">
           <span class="label label-default">user2</span>
-          Hysterical Blindness &rarr; Sign in Blood
-          <a href="#password-modal" role="button" class="btn btn-success btn-xs pull-right" data-toggle="modal">
-            <span class="glyphicon glyphicon-white glyphicon-ok"></span>
-          </a>
-        </li>
-        <li class="list-group-item">
-          <span class="label label-default">user3</span>
-          Tragic Slip &rarr; Brine Shaman
+          <span class="trade-description">Hysterical Blindness &rarr; Sign in Blood</span>
           <a href="#password-modal" role="button" class="btn btn-danger btn-xs pull-right" data-toggle="modal">
             <span class="glyphicon glyphicon-white glyphicon-remove"></span>
           </a>
+        </li>
+        <li class="list-group-item trade-success">
+          <span class="label label-default">user3</span>
+          <span class="trade-description">Tragic Slip &rarr; Brine Shaman</span>
+          <span class="label label-default">user4</span>
+        </li>
+        <li class="list-group-item trade-canceled">
+          <span class="label label-default">user4</span>
+          <span class="trade-description">Lightning Bolt &rarr; Black Lotus</span>
         </li>
       </ul>
     </div>

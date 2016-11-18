@@ -230,15 +230,19 @@
       for (var i = 0; i < trades.length; i++) {
         trade = trades[i];
 
+        // Ignore "null" card
+        if (trade.ownerID == 0)
+          continue;
+
         switch (trade.status) {
           case (TRADE_STATUS_OPEN):
-            addOpenTrade(trade.ownedCard, trade.wantedCard, trade.owner);
+            addOpenTrade(trade.ownedCard, trade.wantedCard, trade.ownerID);
             break;
           case (TRADE_STATUS_SUCCESSFUL):
-            addSucessTrade(trade.ownedCard, trade.wantedCard, trade.owner, trade.taker);
+            addSucessTrade(trade.ownedCard, trade.wantedCard, trade.ownerID, trade.takerID);
             break;
           case (TRADE_STATUS_CANCELLED):
-            addCanceledTrade(trade.ownedCard, trade.wantedCard, trade.owner);
+            addCanceledTrade(trade.ownedCard, trade.wantedCard, trade.ownerID);
             break;
         }
       }

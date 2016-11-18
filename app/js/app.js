@@ -47,8 +47,8 @@ function fetchTradesFromBlockchain() {
 function fetchTradeFromBlockchain(tradeID) {
   var tradeObject = billboard.tradeIntentions.call(tradeID);
   var trade = {
-    owner: parseInt(tradeObject[1], 16),
-    taker: parseInt(tradeObject[2], 16),
+    ownerID: parseInt(tradeObject[1], 16), // convert from hex to string
+    takerID: parseInt(tradeObject[2], 16), // convert from hex to string
     ownedCard: tradeObject[3],
     wantedCard: tradeObject[4],
     status: tradeObject[5].toNumber()

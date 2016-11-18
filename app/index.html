@@ -127,12 +127,9 @@
   <script src="js/app.js"></script>
 
   <script type="text/javascript">
-    var numTrades = 0;
-
-    function addOpenTrade(ownedCard, wantedCard, accountID) {
-      numTrades += 1;
+    function addOpenTrade(tradeID, ownedCard, wantedCard, accountID) {
       var html = '';
-      html += '<li class="list-group-item trade-open" id="trade-' + numTrades + '">';
+      html += '<li class="list-group-item trade-open" id="trade-' + tradeID + '">';
       html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <div class="trade-buttons pull-right">';
@@ -145,12 +142,22 @@
       html += '  </div>';
       html += '</li>';
       $('#trades-list').prepend(html);
+
+      // Add callbacks to modal
+      $('.list-confirm-btn').click(function() {
+        $(this).parent().parent().addClass('active-trade');
+        $('#confirm-trade-modal').modal('show');
+      });
+
+      $('.list-cancel-btn').click(function() {
+        $(this).parent().parent().addClass('active-trade');
+        $('#cancel-trade-modal').modal('show');
+      });
     }
 
-    function addOwnTrade(ownedCard, wantedCard, accountID) {
-      numTrades += 1;
+    function addOwnTrade(tradeID, ownedCard, wantedCard, accountID) {
       var html = '';
-      html += '<li class="list-group-item trade-own" id="trade-' + numTrades + '">';
+      html += '<li class="list-group-item trade-own" id="trade-' + tradeID + '">';
       html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <button class="btn btn-danger btn-xs pull-right list-cancel-btn">';
@@ -160,10 +167,9 @@
       $('#trades-list').prepend(html);
     }
 
-    function addSucessTrade(ownedCard, wantedCard, oldUser, newUser) {
-      numTrades += 1;
+    function addSucessTrade(tradeID, ownedCard, wantedCard, oldUser, newUser) {
       var html = '';
-      html += '<li class="list-group-item trade-success" id="trade-' + numTrades + '">';
+      html += '<li class="list-group-item trade-success" id="trade-' + tradeID + '">';
       html += '  <span class="label label-default">' + oldUser + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '  <span class="label label-default">' + newUser + '</span>\n';
@@ -171,10 +177,9 @@
       $('#trades-list').prepend(html);
     }
 
-    function addCanceledTrade(ownedCard, wantedCard, accountID) {
-      numTrades += 1;
+    function addCanceledTrade(tradeID, ownedCard, wantedCard, accountID) {
       var html = '';
-      html += '<li class="list-group-item trade-canceled" id="trade-' + numTrades + '">';
+      html += '<li class="list-group-item trade-canceled" id="trade-' + tradeID + '">';
       html += '  <span class="label label-default">' + accountID + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
       html += '</li>';
@@ -190,15 +195,7 @@
       }
 
       tradeNumber = tradeID.substring(7, tradeID.length);
-      confirmTradeOnBlockchain(tradeNumber, newUser, function() {
-        // Success
-        $(tradeID).removeClass('trade-open');
-        $(tradeID).addClass('trade-success');
-        $(tradeID).append('  <span class="label label-default">' + newUser + '</span>\n');
-        $(tradeID).children('.trade-buttons').remove();
-      }, function() {
-        // Fail
-      });
+      confirmTradeOnBlockchain(tradeNumber, newUser);
     }
 
     function changeToCanceledTrade(tradeID, accountID) {
@@ -208,14 +205,20 @@
       }
 
       tradeNumber = tradeID.substring(7, tradeID.length);
-      cancelTradeOnBlockchain(tradeNumber, accountID, function() {
-        // Success
-        $(tradeID).removeClass('trade-open');
-        $(tradeID).addClass('trade-canceled');
-        $(tradeID).children('.trade-buttons').remove();
-      }, function() {
-        // Fail
-      });
+      cancelTradeOnBlockchain(tradeNumber, accountID);
+    }
+
+    function updateTradeToSuccessOnList(tradeID, takerID) {
+      $(tradeID).removeClass('trade-open');
+      $(tradeID).addClass('trade-success');
+      $(tradeID).append('  <span class="label label-default">' + takerID + '</span>\n');
+      $(tradeID).children('.trade-buttons').remove();
+    }
+
+    function updateTradeToCancelOnList(tradeID) {
+      $(tradeID).removeClass('trade-open');
+      $(tradeID).addClass('trade-canceled');
+      $(tradeID).children('.trade-buttons').remove();
     }
 
     function mockTrades() {
@@ -239,13 +242,13 @@
 
         switch (trade.status) {
           case (TRADE_STATUS_OPEN):
-            addOpenTrade(trade.ownedCard, trade.wantedCard, trade.ownerID);
+            addOpenTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID);
             break;
           case (TRADE_STATUS_SUCCESSFUL):
-            addSucessTrade(trade.ownedCard, trade.wantedCard, trade.ownerID, trade.takerID);
+            addSucessTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID, trade.takerID);
             break;
           case (TRADE_STATUS_CANCELLED):
-            addCanceledTrade(trade.ownedCard, trade.wantedCard, trade.ownerID);
+            addCanceledTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID);
             break;
         }
       }
@@ -255,14 +258,18 @@
       // mockTrades();
       populateTrades();
 
-      $('.list-confirm-btn').click(function() {
-        $(this).parent().parent().addClass('active-trade');
-        $('#confirm-trade-modal').modal('show');
+      watchNewTrades(function(trade) {
+        addOpenTrade(trade.tradeID, trade.ownedCard, trade.wantedCard, trade.ownerID);
       });
 
-      $('.list-cancel-btn').click(function() {
-        $(this).parent().parent().addClass('active-trade');
-        $('#cancel-trade-modal').modal('show');
+      watchSuccessTrades(function(trade) {
+        var tradeID = '#trade-' + trade.tradeID;
+        updateTradeToSuccessOnList(tradeID, trade.takerID);
+      });
+
+      watchCancelTrades(function(trade) {
+        var tradeID = '#trade-' + trade.tradeID;
+        updateTradeToCancelOnList(tradeID);
       });
 
       $('#confirm-trade-btn').click(function() {

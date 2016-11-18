@@ -78,6 +78,17 @@ function confirmTradeOnBlockchain(tradeID, taker, successCallback, failCallback)
   }
 }
 
+function cancelTradeOnBlockchain(tradeID, owner, successCallback, failCallback) {
+  try {
+    var result = billboard.cancelTradeIntention(tradeID, owner, { from: defaultAccount, value: 0, gas: billboardGas, gasPrice: defaultGasPrice });
+    console.log('Success');
+    successCallback();
+  } catch (err) {
+    console.log('Fail:', err);
+    failCallback();
+  }
+}
+
 $(window).on('load', function() {
   console.log('Default account:', defaultAccount);
 });

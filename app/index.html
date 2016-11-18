@@ -96,6 +96,17 @@
           <h4 class="modal-title">Cancel trade</h4>
         </div>
         <div class="modal-body">
+          <form id="confirm-trade-modal-form" onsubmit="return false;">
+            <div class="form-group">
+              <label for="username">Username:</label>
+              <input type="text" class="form-control" id="cancel-username" required>
+            </div>
+            <!-- <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" id="password">
+            </div> -->
+          </form>
+
           <p>Are you sure you want to <strong>cancel</strong> the trade?</p>
           <p class="text-warning"><small>This action is irreversible.</small></p>
         </div>
@@ -121,9 +132,14 @@
       html += '<li class="list-group-item trade-open" id="trade-' + numTrades + '">';
       html += '  <span class="label label-default">' + user + '</span>\n';
       html += '  <span class="trade-description">' + ownedCard + ' &rarr; ' + wantedCard + '</span>';
-      html += '  <button class="btn btn-success btn-xs pull-right list-confirm-btn">';
-      html += '    <span class="glyphicon glyphicon-white glyphicon-ok"></span>';
-      html += '  </button>';
+      html += '  <div class="trade-buttons pull-right">';
+      html += '    <button class="btn btn-danger btn-xs list-cancel-btn">';
+      html += '      <span class="glyphicon glyphicon-white glyphicon-remove"></span>';
+      html += '    </button>';
+      html += '    <button class="btn btn-success btn-xs list-confirm-btn">';
+      html += '      <span class="glyphicon glyphicon-white glyphicon-ok"></span>';
+      html += '    </button>';
+      html += '  </div>';
       html += '</li>';
       $('#trades-list').prepend(html);
     }
@@ -163,6 +179,8 @@
     }
 
     function changeToSuccessTrade(tradeID, newUser) {
+      console.log('Trade ID:', tradeID);
+
       if (!$(tradeID).hasClass('trade-open')) {
         console.log('Trade is not open');
         return;
@@ -174,23 +192,27 @@
         $(tradeID).removeClass('trade-open');
         $(tradeID).addClass('trade-success');
         $(tradeID).append('  <span class="label label-default">' + newUser + '</span>\n');
-        $(tradeID).children('button').remove();
+        $(tradeID).children('.trade-buttons').remove();
       }, function() {
         // Fail
       });
     }
 
-    function changeToCanceledTrade(tradeID) {
-      if (!$(tradeID).hasClass('trade-own')) {
-        console.log('Trade is not own');
+    function changeToCanceledTrade(tradeID, user) {
+      if (!$(tradeID).hasClass('trade-open')) {
+        console.log('Trade is not open');
         return;
       }
 
-      // TODO: Update trade status in the blockchain
-
-      $(tradeID).removeClass('trade-own');
-      $(tradeID).addClass('trade-canceled');
-      $(tradeID).children('button').remove();
+      tradeNumber = tradeID.substring(7, tradeID.length);
+      cancelTradeOnBlockchain(tradeNumber, user, function() {
+        // Success
+        $(tradeID).removeClass('trade-open');
+        $(tradeID).addClass('trade-canceled');
+        $(tradeID).children('.trade-buttons').remove();
+      }, function() {
+        // Fail
+      });
     }
 
     function mockTrades() {
@@ -227,12 +249,12 @@
       populateTrades();
 
       $('.list-confirm-btn').click(function() {
-        $(this).parent().addClass('active-trade');
+        $(this).parent().parent().addClass('active-trade');
         $('#confirm-trade-modal').modal('show');
       });
 
       $('.list-cancel-btn').click(function() {
-        $(this).parent().addClass('active-trade');
+        $(this).parent().parent().addClass('active-trade');
         $('#cancel-trade-modal').modal('show');
       });
 
@@ -249,10 +271,15 @@
       });
 
       $('#cancel-trade-btn').click(function() {
-        var tradeID = '#' + $('.active-trade')[0].id;
-        changeToCanceledTrade(tradeID);
-        $('.active-trade').removeClass('active-trade');
-        $('#cancel-trade-modal').modal('hide');
+        if ($('#cancel-username')[0].checkValidity()) {
+          var tradeID = '#' + $('.active-trade')[0].id;
+          var user = $('#cancel-username').val();
+          changeToCanceledTrade(tradeID, user);
+          $('.active-trade').removeClass('active-trade');
+          $('#cancel-trade-modal').modal('hide');
+        } else  {
+          $('#cancel-username').focus();
+        }
       });
     });
   </script>

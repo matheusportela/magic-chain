@@ -7,4 +7,4 @@ geth --datadir private_net init support/private_genesis.json
 geth --fast --cache 512 -ipcpath ~/.ethereum/geth.ipc --networkid 1234 --datadir private_net --unlock 0 --rpc --rpccorsdomain="*" --rpcaddr "0.0.0.0"
 
 # Mac OS X
-geth --fast --cache 512 -ipcpath ~/Library/Ethereum/geth.ipc --networkid 1234 --datadir private_net --unlock 0 --rpc --rpccorsdomain="*" --rpcaddr "0.0.0.0"
+# geth --fast --cache 512 -ipcpath ~/Library/Ethereum/geth.ipc --networkid 1234 --datadir private_net --unlock 0 --rpc --rpccorsdomain="*" --rpcaddr "0.0.0.0"
